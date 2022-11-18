@@ -1,1 +1,1 @@
-rootProject.name = "binders"
+rootProject.name = "ctc-backend"

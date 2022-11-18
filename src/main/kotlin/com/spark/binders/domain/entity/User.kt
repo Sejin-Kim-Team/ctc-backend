@@ -5,13 +5,13 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "users")
-class Users(
+class User(
     @Id
     val userId : String?,
     val snsId : String,
     var password: String,
-    val name: String,
-    var email: String?,
+    var name: String?=null,
+    var email: String?=null,
     @Enumerated(EnumType.STRING)
     val gender: Gender,
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)

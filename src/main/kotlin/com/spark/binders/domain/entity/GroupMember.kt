@@ -10,7 +10,7 @@ class GroupMember (
     val id : Long? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    val user : Users,
+    val user : User,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     val group: Group,

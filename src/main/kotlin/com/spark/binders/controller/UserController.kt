@@ -31,7 +31,7 @@ class UserController(
     }
 
     @QueryMapping
-    fun getMe(@Argument userId: String) : UserResponse {
+    fun getMe() : UserResponse {
         val userId = SecurityContextHolder.getContext().authentication.name
         return UserResponse(userService.findByUserId(userId))
     }

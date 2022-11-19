@@ -1,0 +1,53 @@
+type User {
+    userId:ID!
+    snsId:String,
+    name:String,
+    email:String,
+    gender:String,
+    joinedGroups:[GroupMember]
+}
+
+type Group {
+    id:ID!,
+    name:String!,
+    location:String,
+    locationDetail:String,
+    description:String,
+    imageUrl:String,
+    members:[GroupMember]
+}
+
+type GroupInfo {
+    id:ID!,
+    name:String!,
+    location:String,
+    locationDetail:String,
+    description:String,
+    imageUrl:String,
+}
+
+type GroupMember {
+    group:GroupInfo,
+    nickname:String,
+}
+
+type Meeting {
+    name: String,
+    isAnonymous:Boolean,
+    location:String,
+    latitude:Float,
+    longitude:Float,
+    maximumMemberCount:Int,
+    joinedMemberCount:Int,
+    cost:Int,
+    startDate:String,
+    endDate:String,
+    joinedMembers:[MeetingJoinedMember]
+}
+
+type MeetingJoinedMember {
+    id:ID!,
+    member:GroupMember,
+    anonymousNickname:String,
+    attendance:Boolean,
+}

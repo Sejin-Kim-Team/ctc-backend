@@ -42,8 +42,12 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 jwt:
-  secret: testserv
   token-validity-in-seconds: 3600
+
+api:
+  kakao:
+    withdrawal-uri: https://kapi.kakao.com/v1/user/unlink
+    admin-key: ${adminKey}
 
 ---
 spring:

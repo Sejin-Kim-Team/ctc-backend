@@ -24,4 +24,6 @@ Using Skills & opensources
 
 
 ## Run in command line
-- gradle clean bootRun
+```shell
+gradle clean bootRun
+```

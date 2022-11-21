@@ -1,0 +1,9 @@
+
+type Query {
+    getMe:User
+
+}
+type Mutation {
+    updateMe(userId:ID!):User
+    deleteUser(userId: ID!) : Boolean
+}

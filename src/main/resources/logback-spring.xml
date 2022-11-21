@@ -2,10 +2,11 @@
 <!DOCTYPE configuration>
 
 <configuration>
-    <springProfile name="console-logging">
+    <springProfile name="local">
         <include resource="logback/logback-console.xml" />
     </springProfile>
-    <springProfile name="file-logging">
+    <springProfile name="production">
+        <include resource="logback/logback-console.xml" />
         <include resource="logback/logback-file.xml" />
     </springProfile>
 </configuration>

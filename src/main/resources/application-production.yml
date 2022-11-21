@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_URL}/ctc
+    username: ctcadmin
+    password: ${DB_PASS}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  graphql:
+    graphiql:
+      enabled: true
+    path: /endpoints
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KA_CID}
+            client-secret: ${KA_SKEY}
+            redirect-uri: https://ctc-api.eggp.io/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope:
+              - account_email
+              - gender
+              - profile_nickname
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+jwt:
+  token-validity-in-seconds: 3600
+
+api:
+  kakao:
+    withdrawal-uri: https://kapi.kakao.com/v1/user/unlink
+    admin-key: ${KA_AKEY}

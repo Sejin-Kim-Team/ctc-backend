@@ -39,6 +39,9 @@ out/
 ### MAC
 .DS_Store
 
+### jpa
+.jpb/
+
 ### env
 env.list
 src/main/resources/application-local.yml

@@ -24,7 +24,7 @@ class WebSecurityConfig(
     @Bean
     fun webCustomInitializer() : WebSecurityCustomizer {
         return WebSecurityCustomizer {
-            web ->  web.ignoring().antMatchers("/graphiql")
+            web ->  web.ignoring().requestMatchers("/graphiql")
         }
     }
 
@@ -38,9 +38,9 @@ class WebSecurityConfig(
             .formLogin().disable()
             .csrf().disable()
             .cors().disable()
-            .authorizeRequests()
+            .authorizeHttpRequests()
             .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-            .antMatchers("/login", "/error", "/login/**", "/graphiql").permitAll()
+            .requestMatchers("/login", "/error", "/login/**", "/graphiql").permitAll()
             .anyRequest().authenticated()
             .and()
             .oauth2Login()

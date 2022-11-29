@@ -5,6 +5,7 @@ import com.spark.binders.dto.GroupMemberRequest
 import com.spark.binders.dto.UserRequest
 import com.spark.binders.dto.UserResponse
 import com.spark.binders.service.UserService
+import jakarta.servlet.http.HttpSession
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
@@ -12,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.SessionAttribute
-import javax.servlet.http.HttpSession
 
 @RestController
 class UserController(

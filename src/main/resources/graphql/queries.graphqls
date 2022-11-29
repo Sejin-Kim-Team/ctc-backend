@@ -1,9 +1,11 @@
 
 type Query {
-    getMe:User
+    getMe:User,
+
 
 }
 type Mutation {
-    updateMe(userId:ID!):User
+    updateMe(userId:ID!, userRequest:UserRequest):User
+    joinGroup(userId:ID!, groupMemberRequest:GroupMemberRequest):User
     deleteUser(userId: ID!) : Boolean
 }

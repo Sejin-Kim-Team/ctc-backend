@@ -1,7 +1,7 @@
 package com.spark.binders.domain.entity
 
 import com.spark.binders.domain.entity.enum.Gender
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "users")

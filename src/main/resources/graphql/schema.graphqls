@@ -7,6 +7,11 @@ type User {
     joinedGroups:[GroupMember]
 }
 
+input UserRequest{
+    name:String,
+    email:String
+}
+
 type Group {
     id:ID!,
     name:String!,
@@ -29,6 +34,11 @@ type GroupInfo {
 type GroupMember {
     group:GroupInfo,
     nickname:String,
+}
+
+input GroupMemberRequest {
+    groupId: ID!,
+    nickname: String,
 }
 
 type Meeting {

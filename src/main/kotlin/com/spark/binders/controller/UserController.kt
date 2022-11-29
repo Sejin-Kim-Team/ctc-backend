@@ -1,6 +1,8 @@
 package com.spark.binders.controller
 
 import com.spark.binders.auth.JwtTokenProvider
+import com.spark.binders.dto.GroupMemberRequest
+import com.spark.binders.dto.UserRequest
 import com.spark.binders.dto.UserResponse
 import com.spark.binders.service.UserService
 import org.springframework.graphql.data.method.annotation.Argument
@@ -30,13 +32,22 @@ class UserController(
         return response
     }
 
-    @QueryMapping
+    @QueryMapping(name="getMe")
     fun getMe() : UserResponse {
         val userId = SecurityContextHolder.getContext().authentication.name
         return UserResponse(userService.findByUserId(userId))
     }
+    @MutationMapping(name = "updateMe")
+    fun updateMe(@Argument userId: String, @Argument userRequest: UserRequest): UserResponse {
+        return UserResponse(userService.updateMe(userId, userRequest))
+    }
 
-    @MutationMapping
+    @MutationMapping(name = "joinGroup")
+    fun joinGroup(@Argument userId: String, @Argument groupMemberRequest: GroupMemberRequest) : UserResponse {
+        return UserResponse(userService.joinGroup(userId, groupMemberRequest))
+    }
+
+    @MutationMapping(name = "deleteUser")
     fun deleteUser(@Argument userId : String) : Boolean {
         return userService.deleteUser(userId)
     }

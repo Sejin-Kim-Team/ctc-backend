@@ -1,16 +1,24 @@
 package com.spark.binders.dto
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.annotation.JsonProperty
+
+import com.spark.binders.domain.entity.GroupMember
 import com.spark.binders.domain.entity.User
+import com.spark.binders.domain.entity.enum.Gender
 import java.time.LocalDateTime
 
+data class UserRequest(
+    val name: String?,
+    val email: String?,
+    val joinedGroups: MutableList<GroupMember>? = mutableListOf()
+)
 data class UserResponse(
     val userId: String,
     val snsId: String,
     var token: String?=null,
     val name: String,
     val email: String?,
+    val gender: Gender,
+    val joinedGroups: MutableList<GroupMemberResponse>? = mutableListOf(),
     val createdAt: LocalDateTime?,
     val modifiedAt: LocalDateTime?,
 ) {
@@ -22,6 +30,8 @@ data class UserResponse(
                 token=token,
                 name=name!!,
                 email=email,
+                gender = gender,
+                joinedGroups = user.groupMembers?.map { GroupMemberResponse(it.group.id!!, it.group.groupName, it.memberNickname!!) } as MutableList<GroupMemberResponse>?,
                 createdAt=createdAt,
                 modifiedAt = modifiedAt,
             )
@@ -32,6 +42,8 @@ data class UserResponse(
                 snsId=snsId,
                 name=name!!,
                 email=email,
+                gender= gender,
+                joinedGroups = user.groupMembers?.map { GroupMemberResponse(it.group.id!!, it.group.groupName, it.memberNickname!!) } as MutableList<GroupMemberResponse>?,
                 createdAt=createdAt,
                 modifiedAt = modifiedAt,
             )

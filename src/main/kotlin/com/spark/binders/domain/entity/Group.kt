@@ -14,7 +14,7 @@ class Group (
     var description: String? = null,
     var groupImage: String? = null,
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    val groupMember: MutableList<GroupMember>? = mutableListOf(),
+    val groupMembers: MutableList<GroupMember>? = mutableListOf(),
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val meetings: MutableList<Meetings>? = mutableListOf(),
 ) : BaseEntity()

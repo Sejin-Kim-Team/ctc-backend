@@ -3,9 +3,14 @@ package com.spark.binders.service
 import com.spark.binders.auth.CustomUserDetails
 import com.spark.binders.auth.OAuth2UserInfo
 import com.spark.binders.auth.CustomOAuth2User
+import com.spark.binders.domain.entity.GroupMember
 import com.spark.binders.domain.entity.User
+import com.spark.binders.domain.repository.GroupMemberRepository
+import com.spark.binders.domain.repository.GroupRepository
 import com.spark.binders.domain.repository.UserRepository
+import com.spark.binders.dto.GroupMemberRequest
 import com.spark.binders.dto.KakaoUserResponse
+import com.spark.binders.dto.UserRequest
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -18,14 +23,18 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.BodyInserters.fromFormData
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import java.util.UUID
 
 @Service
+@Transactional
 class UserService(
     private val userRepository: UserRepository,
+    private val groupRepository: GroupRepository,
+    private val groupMemberRepository: GroupMemberRepository,
     @Value("\${api.kakao.admin-key}")
     private val kakaoAdminKey : String,
     @Value("\${api.kakao.withdrawal-uri}")
@@ -69,6 +78,35 @@ class UserService(
     fun findByUserId(userId: String) : User {
         val user = userRepository.findByIdOrNull(userId)
         checkNotNull(user)
+        return user
+    }
+
+    fun updateMe(userId: String, userRequest : UserRequest) : User {
+        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+
+        return with(user) {
+            name = userRequest.name?: name
+            email = userRequest.email?: email
+
+            userRepository.save(this)
+        }
+    }
+
+
+    fun joinGroup(userId: String, groupMemberRequest : GroupMemberRequest): User {
+        val group = groupRepository.findByIdOrNull(groupMemberRequest.groupId) ?: throw RuntimeException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+
+        val groupMember = GroupMember(
+            user=user,
+            group = group,
+            memberNickname = groupMemberRequest.nickname?: user.name
+        )
+
+        val savedGroupMember = groupMemberRepository.save(groupMember)
+        group.groupMembers?.add(savedGroupMember)
+        user.groupMembers?.add(savedGroupMember)
+
         return user
     }
 

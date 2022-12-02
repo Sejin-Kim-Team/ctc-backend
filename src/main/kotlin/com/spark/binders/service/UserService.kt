@@ -11,6 +11,7 @@ import com.spark.binders.domain.repository.UserRepository
 import com.spark.binders.dto.GroupMemberRequest
 import com.spark.binders.dto.KakaoUserResponse
 import com.spark.binders.dto.UserRequest
+import com.spark.binders.exception.NotFoundException
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -88,7 +89,7 @@ class UserService(
     }
 
     fun updateMe(userId: String, userRequest : UserRequest) : User {
-        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
 
         return with(user) {
             name = userRequest.name?: name
@@ -100,8 +101,8 @@ class UserService(
 
 
     fun joinGroup(userId: String, groupMemberRequest : GroupMemberRequest): User {
-        val group = groupRepository.findByIdOrNull(groupMemberRequest.groupId) ?: throw RuntimeException()
-        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+        val group = groupRepository.findByIdOrNull(groupMemberRequest.groupId) ?: throw NotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
 
         val groupMember = GroupMember(
             user=user,
@@ -119,8 +120,8 @@ class UserService(
     }
 
     fun quitGroup(userId:String, groupId: Long) :User {
-        val group = groupRepository.findByIdOrNull(groupId) ?: throw RuntimeException()
-        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+        val group = groupRepository.findByIdOrNull(groupId) ?: throw NotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
         val groupMember = groupMemberRepository.findByUserAndGroup(user, group)
         user.quitGroup(groupMember)
         group.removeMember(groupMember)

@@ -34,26 +34,34 @@ class UserController(
 
     @QueryMapping("getMe")
     fun getMe() : UserResponse {
-        val userId = SecurityContextHolder.getContext().authentication.name
-        return UserResponse(userService.getMe(userId))
+        return UserResponse(userService.getMe(getUserId()))
     }
     @MutationMapping("updateMe")
-    fun updateMe(@Argument userId: String, @Argument userRequest: UserRequest): UserResponse {
-        return UserResponse(userService.updateMe(userId, userRequest))
+    fun updateMe(@Argument userRequest: UserRequest): UserResponse {
+        return UserResponse(userService.updateMe(getUserId(), userRequest))
     }
 
     @MutationMapping("joinGroup")
-    fun joinGroup(@Argument userId: String, @Argument groupMemberRequest: GroupMemberRequest) : UserResponse {
-        return UserResponse(userService.joinGroup(userId, groupMemberRequest))
+    fun joinGroup(@Argument groupMemberRequest: GroupMemberRequest) : UserResponse {
+        return UserResponse(userService.joinGroup(getUserId(), groupMemberRequest))
     }
 
     @MutationMapping("quitGroup")
-    fun quitGroup(@Argument userId: String, @Argument groupId: Long): UserResponse {
-        return UserResponse(userService.quitGroup(userId, groupId))
+    fun quitGroup(@Argument groupId: Long): UserResponse {
+        return UserResponse(userService.quitGroup(getUserId(), groupId))
+    }
+
+    @MutationMapping("withdraw")
+    fun withdraw() : Boolean {
+        return userService.deleteUser(getUserId())
     }
 
     @MutationMapping(name = "deleteUser")
     fun deleteUser(@Argument userId : String) : Boolean {
         return userService.deleteUser(userId)
+    }
+
+    private fun getUserId() : String {
+        return SecurityContextHolder.getContext().authentication.name
     }
 }

@@ -24,6 +24,9 @@ class MeetingsService(
 ) {
 
     private val datetimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    private val colorStringSets = setOf("빨간 ", "노란 ", "파란 ", "초록빛 ", "연두빛 ", "검은 ", "보랏빛 ", "투명한 ", "하얀 ", "노을빛 ", "무지개 ", "총천연색 ", "검푸른 ", "쪽빛 ", "줄무늬 ", "황토빛 ", "분홍 ", "하늘빛 ")
+    private val animalStringSets = setOf("호랑이", "코끼리", "도요새", "타조", "캥거루", "햄스터", "토끼", "여우", "곰", "기린", "해치", "용", "티라노", "독수리", "거북이", "낙타")
+
     fun createMeeting(meetingsRequest: MeetingsRequest) = with(meetingsRequest) {
         val group = groupRepository.findByIdOrNull(groupId) ?: throw NotFoundException(ExceptionMessages.NOT_EXIST_GROUP.message)
         val parsedEndDate = if(endDate.isNullOrBlank()) null else LocalDateTime.parse(endDate, datetimeFormatter)
@@ -87,11 +90,18 @@ class MeetingsService(
         val meetings = meetingsRepository.findWithJoinedMembersById(meetingId) ?: throw NotFoundException(ExceptionMessages.NOT_EXIST_MEETING.message)
         val groupMember = groupMemberRepository.findByUserAndGroup(user, meetings.group) ?: throw UnAuthorizedException(ExceptionMessages.NOT_JOINED_GROUP.message)
 
+        var anonymousNickname = nickname
+
+        if(meetings.isAnonymous==true && nickname==null) {
+            anonymousNickname = colorStringSets.random() + animalStringSets.random()
+        } else if(meetings.isAnonymous==false) {
+            anonymousNickname = groupMember.memberNickname
+        }
 
         val joined = MeetingMemberMapping(
             member = groupMember,
             meeting = meetings,
-            anonymousNickname = nickname?: groupMember.memberNickname,
+            anonymousNickname = anonymousNickname,
         )
 
         val savedJoinedMember = meetingsMemberRepository.save(joined)

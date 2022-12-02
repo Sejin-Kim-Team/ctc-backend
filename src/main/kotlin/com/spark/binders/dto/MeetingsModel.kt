@@ -65,7 +65,7 @@ data class MeetingMemberResponse(
             MeetingMemberResponse(
                 id = id!!,
                 memberId = member!!.id!!,
-                nickname = anonymousNickname ?: member!!.memberNickname, //TODO 익명일 경우 닉네임이 null 일 때 임의의 닉네임을 배정해줘야 함.
+                nickname = anonymousNickname,
                 attendance = attendance,
             )
         }

@@ -24,7 +24,7 @@ class WebSecurityConfig(
     @Bean
     fun webCustomInitializer() : WebSecurityCustomizer {
         return WebSecurityCustomizer {
-            web ->  web.ignoring().requestMatchers("/graphiql")
+            web ->  web.ignoring().requestMatchers("/graphiql", "/favicon.ico", "/error")
         }
     }
 

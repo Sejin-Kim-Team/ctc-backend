@@ -32,19 +32,24 @@ class UserController(
         return response
     }
 
-    @QueryMapping(name="getMe")
+    @QueryMapping("getMe")
     fun getMe() : UserResponse {
         val userId = SecurityContextHolder.getContext().authentication.name
-        return UserResponse(userService.findByUserId(userId))
+        return UserResponse(userService.getMe(userId))
     }
-    @MutationMapping(name = "updateMe")
+    @MutationMapping("updateMe")
     fun updateMe(@Argument userId: String, @Argument userRequest: UserRequest): UserResponse {
         return UserResponse(userService.updateMe(userId, userRequest))
     }
 
-    @MutationMapping(name = "joinGroup")
+    @MutationMapping("joinGroup")
     fun joinGroup(@Argument userId: String, @Argument groupMemberRequest: GroupMemberRequest) : UserResponse {
         return UserResponse(userService.joinGroup(userId, groupMemberRequest))
+    }
+
+    @MutationMapping("quitGroup")
+    fun quitGroup(@Argument userId: String, @Argument groupId: Long): UserResponse {
+        return UserResponse(userService.quitGroup(userId, groupId))
     }
 
     @MutationMapping(name = "deleteUser")

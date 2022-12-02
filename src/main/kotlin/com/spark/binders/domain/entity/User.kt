@@ -14,7 +14,16 @@ class User(
     var email: String?=null,
     @Enumerated(EnumType.STRING)
     val gender: Gender,
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "user")
     val groupMembers: MutableList<GroupMember>?= mutableListOf()
 
-) : BaseEntity()
+) : BaseEntity() {
+    fun joinGroup(member: GroupMember) {
+        groupMembers!!.add(member)
+    }
+
+    fun quitGroup(member: GroupMember) {
+        groupMembers!!.remove(member)
+        member.user = null
+    }
+}

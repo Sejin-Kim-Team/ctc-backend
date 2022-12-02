@@ -8,16 +8,16 @@ data class GroupMemberRequest(
 )
 
 data class GroupMemberResponse(
-    val groupId : Long,
-    val groupName : String,
+    val groupId: Long,
+    val groupName: String,
     val nickname: String,
 ) {
     companion object {
-        operator fun invoke(groupMember: GroupMember) {
+        operator fun invoke(groupMember: GroupMember) = with(groupMember) {
             GroupMemberResponse(
-                groupId = groupMember.group.id!!,
-                groupName = groupMember.group.groupName,
-                nickname = groupMember.memberNickname!!,
+                groupId = group!!.id!!,
+                groupName = group!!.groupName,
+                nickname = memberNickname!!,
             )
         }
     }

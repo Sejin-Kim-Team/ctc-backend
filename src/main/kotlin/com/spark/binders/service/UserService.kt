@@ -81,6 +81,12 @@ class UserService(
         return user
     }
 
+    fun getMe(userId: String) : User {
+        val user = userRepository.findWithGroupMembersByUserId(userId)
+        checkNotNull(user)
+        return user
+    }
+
     fun updateMe(userId: String, userRequest : UserRequest) : User {
         val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
 
@@ -103,9 +109,23 @@ class UserService(
             memberNickname = groupMemberRequest.nickname?: user.name
         )
 
-        val savedGroupMember = groupMemberRepository.save(groupMember)
-        group.groupMembers?.add(savedGroupMember)
-        user.groupMembers?.add(savedGroupMember)
+        if(!groupMemberRepository.existsByUserAndGroup(user, group)) {
+            val savedGroupMember = groupMemberRepository.save(groupMember)
+            group.addMember(savedGroupMember)
+            user.joinGroup(savedGroupMember)
+        }
+
+        return user
+    }
+
+    fun quitGroup(userId:String, groupId: Long) :User {
+        val group = groupRepository.findByIdOrNull(groupId) ?: throw RuntimeException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+        val groupMember = groupMemberRepository.findByUserAndGroup(user, group)
+        user.quitGroup(groupMember)
+        group.removeMember(groupMember)
+
+        groupMemberRepository.delete(groupMember)
 
         return user
     }

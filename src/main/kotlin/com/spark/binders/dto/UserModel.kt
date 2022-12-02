@@ -31,7 +31,7 @@ data class UserResponse(
                 name=name!!,
                 email=email,
                 gender = gender,
-                joinedGroups = user.groupMembers?.map { GroupMemberResponse(it.group.id!!, it.group.groupName, it.memberNickname!!) } as MutableList<GroupMemberResponse>?,
+                joinedGroups = user.groupMembers?.map { GroupMemberResponse(it.group!!.id!!, it.group!!.groupName, it.memberNickname!!) } as MutableList<GroupMemberResponse>?,
                 createdAt=createdAt,
                 modifiedAt = modifiedAt,
             )
@@ -43,7 +43,7 @@ data class UserResponse(
                 name=name!!,
                 email=email,
                 gender= gender,
-                joinedGroups = user.groupMembers?.map { GroupMemberResponse(it.group.id!!, it.group.groupName, it.memberNickname!!) } as MutableList<GroupMemberResponse>?,
+                joinedGroups = user.groupMembers?.map { GroupMemberResponse(it.group!!.id!!, it.group!!.groupName, it.memberNickname!!) } as MutableList<GroupMemberResponse>?,
                 createdAt=createdAt,
                 modifiedAt = modifiedAt,
             )

@@ -9,9 +9,9 @@ class MeetingMemberMapping(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?=null,
     @ManyToOne(fetch = FetchType.LAZY)
-    val member: GroupMember,
+    var member: GroupMember?=null,
     @ManyToOne(fetch = FetchType.LAZY)
-    val meeting: Meetings,
+    var meeting: Meetings?=null,
     var anonymousNickname: String?=null,
     var attendance: Boolean?=false,
 ) : BaseEntity()

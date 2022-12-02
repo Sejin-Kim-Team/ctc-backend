@@ -11,6 +11,7 @@ import com.spark.binders.domain.repository.UserRepository
 import com.spark.binders.dto.GroupMemberRequest
 import com.spark.binders.dto.KakaoUserResponse
 import com.spark.binders.dto.UserRequest
+import com.spark.binders.dto.UserResponse
 import com.spark.binders.exception.NotFoundException
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
@@ -82,25 +83,25 @@ class UserService(
         return user
     }
 
-    fun getMe(userId: String) : User {
+    fun getMe(userId: String) : UserResponse {
         val user = userRepository.findWithGroupMembersByUserId(userId)
         checkNotNull(user)
-        return user
+        return UserResponse(user)
     }
 
-    fun updateMe(userId: String, userRequest : UserRequest) : User {
+    fun updateMe(userId: String, userRequest : UserRequest) : UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
 
         return with(user) {
             name = userRequest.name?: name
             email = userRequest.email?: email
 
-            userRepository.save(this)
+            UserResponse(userRepository.save(this))
         }
     }
 
 
-    fun joinGroup(userId: String, groupMemberRequest : GroupMemberRequest): User {
+    fun joinGroup(userId: String, groupMemberRequest : GroupMemberRequest): UserResponse {
         val group = groupRepository.findByIdOrNull(groupMemberRequest.groupId) ?: throw NotFoundException()
         val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
 
@@ -116,19 +117,19 @@ class UserService(
             user.joinGroup(savedGroupMember)
         }
 
-        return user
+        return UserResponse(user)
     }
 
-    fun quitGroup(userId:String, groupId: Long) :User {
+    fun quitGroup(userId:String, groupId: Long) :UserResponse {
         val group = groupRepository.findByIdOrNull(groupId) ?: throw NotFoundException()
         val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
-        val groupMember = groupMemberRepository.findByUserAndGroup(user, group)
+        val groupMember = groupMemberRepository.findByUserAndGroup(user, group) ?: throw NotFoundException()
         user.quitGroup(groupMember)
         group.removeMember(groupMember)
 
         groupMemberRepository.delete(groupMember)
 
-        return user
+        return UserResponse(user)
     }
 
     fun deleteUser(userId: String) : Boolean {

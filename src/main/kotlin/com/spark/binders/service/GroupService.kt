@@ -4,12 +4,12 @@ import com.spark.binders.domain.entity.Group
 import com.spark.binders.domain.repository.GroupRepository
 import com.spark.binders.dto.GroupRequest
 import com.spark.binders.dto.GroupResponse
+import com.spark.binders.exception.NotFoundException
 import jakarta.transaction.Transactional
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.lang.RuntimeException
 
 @Service
 @Transactional
@@ -41,14 +41,14 @@ class GroupService (
     }
 
     fun getGroup(groupId : Long): GroupResponse {
-        val group = groupRepository.findWithGroupMembersById(groupId) ?: throw RuntimeException()
+        val group = groupRepository.findWithGroupMembersById(groupId) ?: throw NotFoundException()
 
         log.info { "MEMBERS !!! : ${group.groupMembers?.get(0)?.memberNickname}" }
         return GroupResponse(group)
     }
 
     fun updateGroup(groupId: Long, groupRequest: GroupRequest) : GroupResponse {
-        val group = groupRepository.findByIdOrNull(groupId) ?: throw RuntimeException()
+        val group = groupRepository.findByIdOrNull(groupId) ?: throw NotFoundException()
 
         return with(group) {
             groupName = groupRequest.name ?: groupName

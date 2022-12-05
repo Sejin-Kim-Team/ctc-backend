@@ -11,14 +11,18 @@ import com.spark.binders.domain.repository.UserRepository
 import com.spark.binders.dto.GroupMemberRequest
 import com.spark.binders.dto.KakaoUserResponse
 import com.spark.binders.dto.UserRequest
+import com.spark.binders.dto.UserResponse
+import com.spark.binders.exception.NotFoundException
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.OAuth2User
@@ -39,20 +43,21 @@ class UserService(
     private val kakaoAdminKey : String,
     @Value("\${api.kakao.withdrawal-uri}")
     private val kakaoUnlink: String,
+    @Lazy
+    private val passwordEncoder: PasswordEncoder,
 ) : DefaultOAuth2UserService(), UserDetailsService {
 
     private val log = KotlinLogging.logger {  }
 
     override fun loadUser(userRequest : OAuth2UserRequest) : OAuth2User {
         val oAuth2User = super.loadUser(userRequest)
-    //    val provider = userRequest.clientRegistration.registrationId TODO 추후 다른 로그인 방식 확장 시 살려야 함.
 
         val oauth2UserInfo = OAuth2UserInfo(
             attributes = oAuth2User.attributes,
         )
         val userId = oauth2UserInfo.getProviderId()
-        //TODO password encryption 필요
         val randomPassword = UUID.randomUUID().toString().substring(0, 20)
+        val encodedPassword = passwordEncoder.encode(randomPassword)
 
         var user = userRepository.findByIdOrNull(userId)
         if(user == null) {
@@ -61,7 +66,7 @@ class UserService(
                 name= oauth2UserInfo.getNickname(),
                 snsId = oauth2UserInfo.getEmail(),
                 email = oauth2UserInfo.getEmail(),
-                password = randomPassword,
+                password = encodedPassword,
                 gender = oauth2UserInfo.getGender()
             )
             userRepository.save(user)
@@ -81,27 +86,27 @@ class UserService(
         return user
     }
 
-    fun getMe(userId: String) : User {
+    fun getMe(userId: String) : UserResponse {
         val user = userRepository.findWithGroupMembersByUserId(userId)
         checkNotNull(user)
-        return user
+        return UserResponse(user)
     }
 
-    fun updateMe(userId: String, userRequest : UserRequest) : User {
-        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+    fun updateMe(userId: String, userRequest : UserRequest) : UserResponse {
+        val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
 
         return with(user) {
             name = userRequest.name?: name
             email = userRequest.email?: email
 
-            userRepository.save(this)
+            UserResponse(userRepository.save(this))
         }
     }
 
 
-    fun joinGroup(userId: String, groupMemberRequest : GroupMemberRequest): User {
-        val group = groupRepository.findByIdOrNull(groupMemberRequest.groupId) ?: throw RuntimeException()
-        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
+    fun joinGroup(userId: String, groupMemberRequest : GroupMemberRequest): UserResponse {
+        val group = groupRepository.findByIdOrNull(groupMemberRequest.groupId) ?: throw NotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
 
         val groupMember = GroupMember(
             user=user,
@@ -115,19 +120,19 @@ class UserService(
             user.joinGroup(savedGroupMember)
         }
 
-        return user
+        return UserResponse(user)
     }
 
-    fun quitGroup(userId:String, groupId: Long) :User {
-        val group = groupRepository.findByIdOrNull(groupId) ?: throw RuntimeException()
-        val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException()
-        val groupMember = groupMemberRepository.findByUserAndGroup(user, group)
+    fun quitGroup(userId:String, groupId: Long) :UserResponse {
+        val group = groupRepository.findByIdOrNull(groupId) ?: throw NotFoundException()
+        val user = userRepository.findByIdOrNull(userId) ?: throw NotFoundException()
+        val groupMember = groupMemberRepository.findByUserAndGroup(user, group) ?: throw NotFoundException()
         user.quitGroup(groupMember)
         group.removeMember(groupMember)
 
         groupMemberRepository.delete(groupMember)
 
-        return user
+        return UserResponse(user)
     }
 
     fun deleteUser(userId: String) : Boolean {

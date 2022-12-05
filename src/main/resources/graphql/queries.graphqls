@@ -3,6 +3,8 @@ type Query {
     getMe: User,
     getGroups(pageNumber: Int, pageSize: Int): [Group]
     getGroup(groupId: ID): Group
+    getMeetings(groupId: ID, pageNumber: Int, pageSize: Int): [Meeting]
+    getMeeting(meetingId: ID): Meeting
 
 }
 type Mutation {
@@ -15,4 +17,11 @@ type Mutation {
     createGroup(group: GroupRequest): Group
     updateGroup(groupId: ID!, group: GroupRequest): Group
     deleteGroup(groupId: ID!): Boolean
+
+    createMeeting(meetingRequest: MeetingRequest): Meeting
+    updateMeeting(meetingId: ID!, meetingRequest: MeetingRequest): Meeting
+    deleteMeeting(meetingId: ID!): Boolean
+    joinMeeting(meetingId: ID!, nickname: String): Meeting
+    leaveMeeting(meetingId: ID!): Boolean
+    attendance(meetingId: ID!): Boolean
 }

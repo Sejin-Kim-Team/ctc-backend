@@ -27,4 +27,8 @@ class Group (
         groupMembers!!.remove(member)
         member.group = null
     }
+
+    fun addMeeting(meeting: Meetings) {
+        meetings!!.add(meeting)
+    }
 }

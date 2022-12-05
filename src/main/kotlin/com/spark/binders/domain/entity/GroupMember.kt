@@ -15,4 +15,15 @@ class GroupMember (
     @ManyToOne(fetch = FetchType.LAZY)
     var group: Group? = null,
     var memberNickname: String? = null,
-) : BaseEntity()
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    val joinedMeetings: MutableList<MeetingMemberMapping>? = mutableListOf()
+) : BaseEntity() {
+    fun joinMeeting(meeting: MeetingMemberMapping) {
+        joinedMeetings?.add(meeting)
+    }
+
+    fun leaveMeeting(meeting: MeetingMemberMapping) {
+        joinedMeetings?.remove(meeting)
+        meeting.member = null
+    }
+}

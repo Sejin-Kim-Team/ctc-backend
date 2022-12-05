@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface GroupMemberRepository : JpaRepository<GroupMember, Long> {
     fun existsByUserAndGroup(user : User, group: Group) : Boolean
-    fun findByUserAndGroup(user : User, group: Group) : GroupMember
+    fun findByUserAndGroup(user : User, group: Group) : GroupMember?
 }

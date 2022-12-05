@@ -1,9 +1,18 @@
 
 type Query {
-    getMe:User
+    getMe: User,
+    getGroups(pageNumber: Int, pageSize: Int): [Group]
+    getGroup(groupId: ID): Group
 
 }
 type Mutation {
-    updateMe(userId:ID!):User
+    updateMe(userRequest:UserRequest): User
+    withdraw: Boolean
     deleteUser(userId: ID!) : Boolean
+    joinGroup(groupMemberRequest: GroupMemberRequest): User
+    quitGroup(groupId: ID!): User
+
+    createGroup(group: GroupRequest): Group
+    updateGroup(groupId: ID!, group: GroupRequest): Group
+    deleteGroup(groupId: ID!): Boolean
 }

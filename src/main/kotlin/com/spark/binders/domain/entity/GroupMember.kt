@@ -1,6 +1,7 @@
 package com.spark.binders.domain.entity
 
-import javax.persistence.*
+import jakarta.persistence.*
+
 
 @Entity
 @Table(name = "group_member")
@@ -10,9 +11,8 @@ class GroupMember (
     val id : Long? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    val user : User,
+    var user : User? = null,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    val group: Group,
+    var group: Group? = null,
     var memberNickname: String? = null,
 ) : BaseEntity()

@@ -12,9 +12,9 @@ and then returns before the meeting is over.
 This is the backend project for an app that manages meetings and attendance.
 
 Using Skills & opensources 
-- Gradle (7.5.1)
-- Spring boot (2.7.5)
-- Kotlin (1.7.10)
+- Gradle (7.6)
+- Spring boot (3.0.0)
+- Kotlin (1.7.21)
 - PostgreSQL (latest)
 
 ## Before run

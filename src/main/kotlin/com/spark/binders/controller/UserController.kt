@@ -1,8 +1,11 @@
 package com.spark.binders.controller
 
 import com.spark.binders.auth.JwtTokenProvider
+import com.spark.binders.dto.GroupMemberRequest
+import com.spark.binders.dto.UserRequest
 import com.spark.binders.dto.UserResponse
 import com.spark.binders.service.UserService
+import jakarta.servlet.http.HttpSession
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
@@ -10,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.SessionAttribute
-import javax.servlet.http.HttpSession
 
 @RestController
 class UserController(
@@ -30,14 +32,36 @@ class UserController(
         return response
     }
 
-    @QueryMapping
+    @QueryMapping("getMe")
     fun getMe() : UserResponse {
-        val userId = SecurityContextHolder.getContext().authentication.name
-        return UserResponse(userService.findByUserId(userId))
+        return UserResponse(userService.getMe(getUserId()))
+    }
+    @MutationMapping("updateMe")
+    fun updateMe(@Argument userRequest: UserRequest): UserResponse {
+        return UserResponse(userService.updateMe(getUserId(), userRequest))
     }
 
-    @MutationMapping
+    @MutationMapping("joinGroup")
+    fun joinGroup(@Argument groupMemberRequest: GroupMemberRequest) : UserResponse {
+        return UserResponse(userService.joinGroup(getUserId(), groupMemberRequest))
+    }
+
+    @MutationMapping("quitGroup")
+    fun quitGroup(@Argument groupId: Long): UserResponse {
+        return UserResponse(userService.quitGroup(getUserId(), groupId))
+    }
+
+    @MutationMapping("withdraw")
+    fun withdraw() : Boolean {
+        return userService.deleteUser(getUserId())
+    }
+
+    @MutationMapping(name = "deleteUser")
     fun deleteUser(@Argument userId : String) : Boolean {
         return userService.deleteUser(userId)
+    }
+
+    private fun getUserId() : String {
+        return SecurityContextHolder.getContext().authentication.name
     }
 }

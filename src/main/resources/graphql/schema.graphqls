@@ -51,7 +51,10 @@ input GroupRequest {
 }
 
 type Meeting {
-    name: String,
+    id: ID,
+    meetingName: String,
+    groupId: Int,
+    groupName: String,
     isAnonymous:Boolean,
     location:String,
     latitude:Float,
@@ -64,9 +67,23 @@ type Meeting {
     joinedMembers:[MeetingJoinedMember]
 }
 
+input MeetingRequest {
+    groupId: Int!,
+    meetingName: String,
+    isAnonymous: Boolean,
+    location:String,
+    latitude:Float,
+    longitude:Float,
+    maximumMemberCount:Int,
+    joinedMemberCount:Int,
+    cost:Int,
+    startDate:String,
+    endDate:String,
+}
+
 type MeetingJoinedMember {
     id:ID!,
     member:GroupMember,
-    anonymousNickname:String,
+    nickname:String,
     attendance:Boolean,
 }

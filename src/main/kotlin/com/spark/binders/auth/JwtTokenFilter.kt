@@ -1,16 +1,15 @@
 package com.spark.binders.auth
 
+import com.spark.binders.exception.UnAuthorizedException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
-import mu.KotlinLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.filter.GenericFilterBean
-import javax.naming.AuthenticationException
 
 
 class JwtTokenFilter(
@@ -40,7 +39,7 @@ class JwtTokenFilter(
             SecurityContextHolder.getContext().authentication = token
             chain?.doFilter(request, response)
         } else {
-            throw AuthenticationException("Invalid Token")
+            throw UnAuthorizedException()
         }
     }
 
